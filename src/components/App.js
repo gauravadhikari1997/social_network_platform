@@ -27,7 +27,7 @@ class App extends Component {
                 >
                   <img src={logo} className="App-logo" alt="logo" />
                 </a>
-                <h1>Dapp University Starter Kit</h1>
+                <h1>Social Network Platform</h1>
                 <p>
                   Edit <code>src/components/App.js</code> and save to reload.
                 </p>
