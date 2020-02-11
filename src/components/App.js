@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import Web3 from 'web3';
-import Identicon from 'identicon.js';
 import './App.css';
 import SocialNetwork from '../abis/SocialNetwork.json';
 import Navbar from './Navbar';
@@ -8,7 +7,7 @@ import Main from './Main';
 
 class App extends Component {
   constructor(props) {
-    super(props);
+    super(props)
     this.state = {
       accounts: '',
       socialNetwork: null,
@@ -17,6 +16,7 @@ class App extends Component {
       loading: true
     }
     this.createPost = this.createPost.bind(this);
+    this.tipPost = this.tipPost.bind(this);
   }
   async componentWillMount() {
     await this.loadWeb3()
@@ -54,6 +54,10 @@ class App extends Component {
         const post = await socialNetwork.methods.posts(i).call()
         this.setState({ posts:[...this.state.posts, post]})
       }
+      // Sort posts to view highest tipped posts at top
+      this.setState({
+        posts: this.state.posts.sort((a, b) => b.tipAmount - a.tipAmount)
+      })
       this.setState({ loading: false })
     }else {
       window.alert('SocialNetwork contract not deployed to detected network')
@@ -67,6 +71,13 @@ class App extends Component {
       this.setState({ loading: false})
     })
   }
+
+  tipPost(id, tipAmount) {
+    this.setState({ loading: true })
+    this.state.socialNetwork.methods.tipPost(id).send({ from: this.state.accounts, value: tipAmount}).once('receipt', (receipt) => {
+      this.setState({ loading: false })
+    })
+  }
   render() {
     return (
       <div>
@@ -75,10 +86,10 @@ class App extends Component {
           ?
           <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
           :
-          <Main posts={this.state.posts} createPost={this.createPost}/>
+          <Main posts={this.state.posts} createPost={this.createPost} tipPost={this.tipPost} />
         }
       </div>
-    )
+    );
   }
 }
 

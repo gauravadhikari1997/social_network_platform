@@ -56,6 +56,6 @@ contract SocialNetwork {
       // Update the post
       posts[_id] = _post;
       // Trigger an event
-      emit PostTipped(_id, _post.content, _post.tipAmount, _author);
+      emit PostTipped(postCount, _post.content, _post.tipAmount, _author);
     }
 }
