@@ -6,19 +6,15 @@ import Navbar from "./Navbar";
 import Main from "./Main";
 
 class App extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      accounts: "",
-      socialNetwork: null,
-      postCount: 0,
-      posts: [],
-      loading: true,
-      metamask: false
-    };
-    this.createPost = this.createPost.bind(this);
-    this.tipPost = this.tipPost.bind(this);
-  }
+  state = {
+    accounts: "",
+    socialNetwork: null,
+    postCount: 0,
+    posts: [],
+    loading: true,
+    metamask: false
+  };
+
   async componentWillMount() {
     await this.loadWeb3();
     await this.loadBlockchainData();
@@ -71,7 +67,7 @@ class App extends Component {
     // Address
     // ABI
   }
-  createPost(content) {
+  createPost = content => {
     this.setState({ loading: true });
     this.state.socialNetwork.methods
       .createPost(content)
@@ -79,18 +75,17 @@ class App extends Component {
       .then("receipt", receipt => {
         this.setState({ loading: false });
       });
-  }
+  };
 
-  tipPost(id, tipAmount) {
+  tipPost = (id, tipAmount) => {
     this.setState({ loading: true });
     this.state.socialNetwork.methods
       .tipPost(id)
       .send({ from: this.state.accounts, value: tipAmount })
-      .then(receipt => {
-        window.location.reload(false);
+      .on("receipt", receipt => {
         this.setState({ loading: false });
       });
-  }
+  };
   render() {
     return (
       <div>

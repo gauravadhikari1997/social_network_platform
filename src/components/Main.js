@@ -47,9 +47,10 @@ class Main extends Component {
                   <hr />
                 </span>
               )}
-              <p align="center">
-                &nbsp; <h3>Trending Posts &#9829;</h3>
-              </p>
+              <p>&nbsp;</p>
+              <center>
+                <h3>Trending Posts &#9829;</h3>
+              </center>
               {this.props.posts.map((post, key) => {
                 return (
                   <div className="card mb-4" key={key}>
