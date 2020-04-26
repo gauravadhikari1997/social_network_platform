@@ -13,7 +13,8 @@ class App extends Component {
       socialNetwork: null,
       postCount: 0,
       posts: [],
-      loading: true
+      loading: true,
+      metamask: false
     };
     this.createPost = this.createPost.bind(this);
     this.tipPost = this.tipPost.bind(this);
@@ -23,15 +24,17 @@ class App extends Component {
     await this.loadBlockchainData();
   }
   async loadWeb3() {
-    if (window.ethereum) {
-      window.web3 = new Web3(window.ethereum);
-      await window.ethereum.enable();
-    } else if (window.web3) {
+    if (typeof window !== "undefined" && typeof window.web3 !== "undefined") {
+      // if we are in browser and Metamask is already installed
+      window.ethereum.enable();
       window.web3 = new Web3(window.web3.currentProvider);
+      this.setState({ metamask: true });
     } else {
-      window.alert(
-        "Non-Ethereum browser detected. You should consider trying MetaMask!"
+      // we are on server or user is not running Metamask
+      const provider = new Web3.providers.HttpProvider(
+        "https://rinkeby.infura.io/v3/aaa697ff9b38438585c95dc555c75afa"
       );
+      window.web3 = new Web3(provider);
     }
   }
 
@@ -74,7 +77,6 @@ class App extends Component {
       .createPost(content)
       .send({ from: this.state.accounts })
       .then("receipt", receipt => {
-        window.location.reload(false);
         this.setState({ loading: false });
       });
   }
@@ -84,7 +86,8 @@ class App extends Component {
     this.state.socialNetwork.methods
       .tipPost(id)
       .send({ from: this.state.accounts, value: tipAmount })
-      .once("receipt", receipt => {
+      .then(receipt => {
+        window.location.reload(false);
         this.setState({ loading: false });
       });
   }
@@ -101,6 +104,7 @@ class App extends Component {
             posts={this.state.posts}
             createPost={this.createPost}
             tipPost={this.tipPost}
+            metamask={this.state.metamask}
           />
         )}
       </div>
